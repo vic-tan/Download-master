@@ -1,4 +1,4 @@
-# GHDownload
+# 本项目出自于  GHDownload 地址https://github.com/guanchao/GHDownload.git
 ## 一、How to use?
 **Step1:**
 ```java 
