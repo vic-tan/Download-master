@@ -10,6 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/download" />
+            <option value="$PROJECT_DIR$/example-DaoExampleGenerator" />
+            <option value="$PROJECT_DIR$/example-DaoGenerator" />
+            <option value="$PROJECT_DIR$/library-greenDAO" />
           </set>
         </option>
       </GradleProjectSettings>

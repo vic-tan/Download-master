@@ -1,14 +1,15 @@
 package com.tanlifei.download.notify;
 
+import android.content.Context;
+
+import com.tanlifei.download.db.DBController;
+import com.tanlifei.download.entity.DownloadStatusLevel;
+import com.tanlifei.download.entity.test.DownloadEntry;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observable;
-
-import android.content.Context;
-
-import com.tanlifei.download.db.DBController;
-import com.tanlifei.download.entity.DownloadEntry;
 
 /**
  * 
@@ -38,7 +39,7 @@ public class DataChanger extends Observable{
 	}
 	
 	public void updateStatus(DownloadEntry entry) {
-		mOperateEntries.put(entry.url, entry);
+		mOperateEntries.put(entry.getUrl(), entry);
         DBController.getInstance(context).newOrUpdate(entry);
 		setChanged();
 		notifyObservers(entry);
@@ -47,7 +48,7 @@ public class DataChanger extends Observable{
 	public ArrayList<DownloadEntry> queryAllRecoverableEntries() {
         ArrayList<DownloadEntry> mRecoverableEntries = null;
         for (Map.Entry<String, DownloadEntry> entry : mOperateEntries.entrySet()) {
-            if (entry.getValue().status == DownloadEntry.DownloadStatus.pause) {
+            if (entry.getValue().getStatus() == DownloadStatusLevel.PAUSE.value()) {
                 if (mRecoverableEntries == null) {
                     mRecoverableEntries = new ArrayList();
                 }

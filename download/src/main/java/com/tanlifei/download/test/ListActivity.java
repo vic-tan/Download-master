@@ -1,7 +1,5 @@
 package com.tanlifei.download.test;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,9 +14,11 @@ import android.widget.TextView;
 
 import com.tanlifei.download.DownloadManager;
 import com.tanlifei.download.R;
-import com.tanlifei.download.entity.DownloadEntry;
-import com.tanlifei.download.entity.DownloadEntry.DownloadStatus;
+import com.tanlifei.download.entity.DownloadStatusLevel;
+import com.tanlifei.download.entity.test.DownloadEntry;
 import com.tanlifei.download.notify.DataWatcher;
+
+import java.util.ArrayList;
 
 /**
  * 
@@ -42,12 +42,17 @@ public class ListActivity extends Activity implements OnClickListener{
 
 		@Override
 		public void onDataChanged(DownloadEntry downloadEntry) {
-			int index = downloadEntries.indexOf(downloadEntry);
-			if(index != -1){
-				downloadEntries.remove(index);
-				downloadEntries.add(index, downloadEntry);
-				adapter.notifyDataSetChanged();
+
+			int index = -1;
+			for (int i = 0 ;i<=downloadEntries.size()-1;i++){
+				if(downloadEntry.getUrl().equals(downloadEntries.get(i).getUrl())){
+					downloadEntries.remove(i);
+					downloadEntries.add(i, downloadEntry);
+					index = i;
+				}
 			}
+			if(index!=-1)
+				adapter.updateView(index);
 		}
 	};
 	
@@ -64,28 +69,28 @@ public class ListActivity extends Activity implements OnClickListener{
 		listView = (ListView) findViewById(R.id.listview);
 		
 		DownloadEntry entry = new DownloadEntry();
-		entry.name = "少年三国志.apk";
-		entry.url = "http://gh-game.oss-cn-hangzhou.aliyuncs.com/1435814701749842.apk";
+		entry.setName("少年三国志.apk");
+		entry.setUrl("http://gh-game.oss-cn-hangzhou.aliyuncs.com/1435814701749842.apk");
 		downloadEntries.add(entry);
 		
 		entry = new DownloadEntry();
-		entry.name = "放开那三国.apk";
-		entry.url = "http://gh-game.oss-cn-hangzhou.aliyuncs.com/1437641784268948.apk";
+		entry.setName( "放开那三国.apk");
+		entry.setUrl("http://gh-game.oss-cn-hangzhou.aliyuncs.com/1437641784268948.apk");
 		downloadEntries.add(entry);
 		
 		entry = new DownloadEntry();
-		entry.name = "去吧皮卡丘.apk";
-		entry.url = "http://gh-game.oss-cn-hangzhou.aliyuncs.com/1437740158861375.apk";
+		entry.setName( "去吧皮卡丘.apk");
+		entry.setUrl("http://gh-game.oss-cn-hangzhou.aliyuncs.com/1437740158861375.apk");
 		downloadEntries.add(entry);
 		
 		entry = new DownloadEntry();
-		entry.name = "X三国.apk";
-		entry.url = "http://gh-game.oss-cn-hangzhou.aliyuncs.com/1434794302961350.apk";
+		entry.setName( "X三国.apk");
+		entry.setUrl("http://gh-game.oss-cn-hangzhou.aliyuncs.com/1434794302961350.apk");
 		downloadEntries.add(entry);
 		
 		entry = new DownloadEntry();
-		entry.name = "火影忍者-忍者大师.apk";
-		entry.url = "http://gh-game.oss-cn-hangzhou.aliyuncs.com/1435242602866100.apk";
+		entry.setName( "火影忍者-忍者大师.apk");
+		entry.setUrl("http://gh-game.oss-cn-hangzhou.aliyuncs.com/1435242602866100.apk");
 		downloadEntries.add(entry);
         
         adapter = new DownloadAdapter();
@@ -144,12 +149,12 @@ public class ListActivity extends Activity implements OnClickListener{
             holder.downloadBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                	if(entry.status == DownloadStatus.idle){
+                	if(entry.getStatus() == DownloadStatusLevel.IDLE.value()){
         				DownloadManager.getInstance(ListActivity.this).add(entry);
-        			}else if(entry.status == DownloadStatus.downloading 
-        					||entry.status == DownloadStatus.waiting ){
+        			}else if(entry.getStatus() == DownloadStatusLevel.DOWNLOADING.value()
+        					||entry.getStatus() == DownloadStatusLevel.WAITING.value() ){
         				DownloadManager.getInstance(ListActivity.this).pause(entry);
-        			}else if(entry.status == DownloadStatus.pause){
+        			}else if(entry.getStatus() == DownloadStatusLevel.PAUSE.value()){
         				DownloadManager.getInstance(ListActivity.this).resume(entry);
         			}else{
         				DownloadManager.getInstance(ListActivity.this).add(entry);
@@ -175,6 +180,22 @@ public class ListActivity extends Activity implements OnClickListener{
         	Button downloadBtn2;
             TextView statusText;
         }
+
+		// 更新指定item的数据
+		private void updateView(int index)
+		{
+			int visiblePos = listView.getFirstVisiblePosition();
+			int offset = index - visiblePos;
+			//Log.e("", "index="+index+"visiblePos="+visiblePos+"offset="+offset);
+			// 只有在可见区域才更新
+			if(offset < 0) return;
+
+			View view = listView.getChildAt(offset);
+			final DownloadEntry entry = downloadEntries.get(index);
+			ViewHolder holder = (ViewHolder)view.getTag();
+			//Log.e("", "id="+app.id+", name="+app.name);
+			holder.statusText.setText(entry.toString());
+		}
     }
 
 	@Override
@@ -188,5 +209,7 @@ public class ListActivity extends Activity implements OnClickListener{
 			break;
 		}
 	}
+
+
 
 }

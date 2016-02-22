@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.tanlifei.download.DownloadManager;
 import com.tanlifei.download.R;
-import com.tanlifei.download.entity.DownloadEntry;
+import com.tanlifei.download.entity.test.DownloadEntry;
 import com.tanlifei.download.notify.DataWatcher;
 
 /**
@@ -36,8 +36,10 @@ public class DetailsActivity extends Activity implements OnClickListener{
 
 		@Override
 		public void onDataChanged(DownloadEntry data) {
-			entry = data;
-			showText.setText(entry.toString());
+			if(data.getUrl().equals(entry.getUrl())){
+				entry = data;
+				showText.setText(entry.toString());
+			}
 		}
 	};
 

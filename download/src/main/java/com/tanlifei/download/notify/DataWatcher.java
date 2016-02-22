@@ -1,9 +1,9 @@
 package com.tanlifei.download.notify;
 
+import com.tanlifei.download.entity.test.DownloadEntry;
+
 import java.util.Observable;
 import java.util.Observer;
-
-import com.tanlifei.download.entity.DownloadEntry;
 
 /**
  * 

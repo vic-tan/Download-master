@@ -1,15 +1,14 @@
 package com.tanlifei.download.db;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import android.content.Context;
 
-import com.tanlifei.download.entity.DownloadEntry;
-import com.tanlifei.download.utils.Trace;
-import com.j256.ormlite.dao.Dao;
+import com.tanlifei.download.BaseApplication;
+import com.tanlifei.download.entity.test.DownloadEntry;
+import com.tanlifei.download.entity.test.DownloadEntryDao;
+
+import java.util.List;
+
 /**
- * 
  * @author shuwoom
  * @email 294299195@qq.com
  * @date 2015-9-2
@@ -18,11 +17,10 @@ import com.j256.ormlite.dao.Dao;
  */
 public class DBController {
     private static DBController mInstance;
-    private OrmDBHelper mDBhelper;
+    private DownloadEntryDao dao;
 
     private DBController(Context context) {
-        mDBhelper = new OrmDBHelper(context);
-        mDBhelper.getWritableDatabase();
+        dao = BaseApplication.daoMaster.newSession().getDownloadEntryDao();
     }
 
     public static DBController getInstance(Context context) {
@@ -33,42 +31,23 @@ public class DBController {
     }
 
     public synchronized void newOrUpdate(DownloadEntry entry) {
-        try {
-            Dao<DownloadEntry, String> dao = mDBhelper.getDao(DownloadEntry.class);
-            dao.createOrUpdate(entry);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        dao.insertOrReplace(entry);
     }
 
-    public synchronized ArrayList<DownloadEntry> queryAll() {
-        Dao<DownloadEntry, String> dao;
-        try {
-            dao = mDBhelper.getDao(DownloadEntry.class);
-            return (ArrayList<DownloadEntry>) dao.query(dao.queryBuilder().prepare());
-        } catch (SQLException e) {
-            Trace.e(e.getMessage());
-            return null;
-        }
+    public synchronized List<DownloadEntry> queryAll() {
+        return dao.loadAll();
     }
 
     public synchronized DownloadEntry queryByUrl(String url) {
-        try {
-            Dao<DownloadEntry, String> dao = mDBhelper.getDao(DownloadEntry.class);
-            return dao.queryForId(url);
-        } catch (SQLException e) {
-            Trace.e(e.getMessage());
+        List<DownloadEntry> list = dao.queryBuilder().where(DownloadEntryDao.Properties.Url.eq(url)).list();
+        if (list != null)
+            return list.get(0);
+        else
             return null;
-        }
     }
-    
-    public synchronized void deleteByUrl(String url){
-    	 try {
-			Dao<DownloadEntry, String> dao = mDBhelper.getDao(DownloadEntry.class);
-			dao.deleteById(url);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
+    public synchronized void deleteByUrl(String url) {
+        dao.deleteByKey(url);
     }
 
 }

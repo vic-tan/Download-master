@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Download-master.iml" filepath="$PROJECT_DIR$/Download-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/download/download.iml" filepath="$PROJECT_DIR$/download/download.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example-DaoExampleGenerator/example-DaoExampleGenerator.iml" filepath="$PROJECT_DIR$/example-DaoExampleGenerator/example-DaoExampleGenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example-DaoGenerator/example-DaoGenerator.iml" filepath="$PROJECT_DIR$/example-DaoGenerator/example-DaoGenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-greenDAO/library-greenDAO.iml" filepath="$PROJECT_DIR$/library-greenDAO/library-greenDAO.iml" />
     </modules>
   </component>
 </project>

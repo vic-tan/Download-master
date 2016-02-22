@@ -1,8 +1,8 @@
 package com.tanlifei.download;
 
-import java.io.File;
-
 import android.os.Environment;
+
+import java.io.File;
 /**
  * 
  * @author shuwoom
@@ -14,8 +14,8 @@ import android.os.Environment;
 public class DownloadConfig {
 	private static DownloadConfig mInstance;
 	
-	private int max_download_tasks = 3;
-    private int max_download_threads = 3;
+	private int max_download_tasks = 3;//同时正在下载文件数
+    private int max_download_threads = 1;//下载单个文件最大分线程数,最多为3个
     private int min_operate_interval = 1000 * 1;
     private boolean recoverDownloadWhenStart = false;
     public static String DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + File.separator +

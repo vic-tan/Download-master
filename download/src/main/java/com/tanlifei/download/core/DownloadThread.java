@@ -1,5 +1,10 @@
 package com.tanlifei.download.core;
 
+import com.tanlifei.download.DownloadConfig;
+import com.tanlifei.download.entity.DownloadStatusLevel;
+import com.tanlifei.download.utils.Constants;
+import com.tanlifei.download.utils.Trace;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,12 +14,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import com.tanlifei.download.DownloadConfig;
-import com.tanlifei.download.entity.DownloadEntry;
-import com.tanlifei.download.entity.DownloadEntry.DownloadStatus;
-import com.tanlifei.download.utils.Constants;
-import com.tanlifei.download.utils.Trace;
 
 /**
  * 
@@ -37,7 +36,7 @@ public class DownloadThread implements Runnable{
 	private volatile boolean isError;
 	private boolean isSingleDownload;
 	
-	private DownloadStatus status;
+	private int status;
 	
 	public DownloadThread(String url, int index, int startPos, int endPos, DownloadListener listener) {
 		this.url = url;
@@ -55,7 +54,7 @@ public class DownloadThread implements Runnable{
 
 	@Override
 	public void run() {
-		status = DownloadEntry.DownloadStatus.downloading;
+		status = DownloadStatusLevel.DOWNLOADING.value();
 		HttpURLConnection connection = null;
 		try {
 			connection = (HttpURLConnection)new URL(url).openConnection();
@@ -142,41 +141,41 @@ public class DownloadThread implements Runnable{
 				is.close();
 			}else{
 				Trace.d("DownloadThread==>index:" + index + " run()#####server error");
-				status = DownloadEntry.DownloadStatus.error;
+				status = DownloadStatusLevel.ERROR.value();
                 listener.onDownloadError(index, "server error:" + responseCode);
                 return;
 			}
 			
 			if(isPaused){
 				Trace.d("DownloadThread==>index:" + index + " run()#####pause");
-				status = DownloadStatus.pause;
+				status = DownloadStatusLevel.PAUSE.value();
 				listener.onDownloadPaused(index);
 			}else if(isCanceled){
 				Trace.d("DownloadThread==>index:" + index + " run()#####cancel");
-				status = DownloadStatus.cancel;
+				status = DownloadStatusLevel.CANCEL.value();
 				listener.onDownloadCanceled(index);
 			}else if(isError){
 				Trace.d("DownloadThread==>index:" + index + " run()#####error");
-				status = DownloadStatus.error;
+				status = DownloadStatusLevel.ERROR.value();
 				listener.onDownloadError(index, "cancel manually by error");
 			}else{
 				Trace.d("DownloadThread==>index:" + index + " run()#####done");
-				status = DownloadStatus.done;
+				status = DownloadStatusLevel.DONE.value();
 				listener.onDownloadCompleted(index);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			if(isPaused){
 				Trace.d("DownloadThread==>" + " run()#####exception and pause");
-				status = DownloadStatus.pause;
+				status = DownloadStatusLevel.PAUSE.value();
 				listener.onDownloadPaused(index);
 			}else if(isCanceled){
 				Trace.d("DownloadThread==>index:" + index + " run()#####exception and cancel");
-				status = DownloadStatus.cancel;
+				status = DownloadStatusLevel.CANCEL.value();
 				listener.onDownloadCanceled(index);
 			}else{
 				Trace.d("DownloadThread==>index:" + index + " run()#####error");
-				status = DownloadStatus.error;
+				status = DownloadStatusLevel.ERROR.value();
 				listener.onDownloadError(index, e.getMessage());
 			}
 			
@@ -214,7 +213,7 @@ public class DownloadThread implements Runnable{
 	}
 
 	public boolean isRunning() {
-		return status == DownloadStatus.downloading;
+		return status == DownloadStatusLevel.DOWNLOADING.value();
 	}
 
 	public void cancelByError() {

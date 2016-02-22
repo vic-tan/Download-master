@@ -1,13 +1,11 @@
 package com.tanlifei.download;
 
 
-
-
 import android.content.Context;
 import android.content.Intent;
 
 import com.tanlifei.download.core.DownloadService;
-import com.tanlifei.download.entity.DownloadEntry;
+import com.tanlifei.download.entity.test.DownloadEntry;
 import com.tanlifei.download.notify.DataChanger;
 import com.tanlifei.download.notify.DataWatcher;
 import com.tanlifei.download.utils.Constants;
